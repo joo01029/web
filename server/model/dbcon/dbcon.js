@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize(
-  'webProject',
+  'webproject',
   'root',
   'pure6671',
   {

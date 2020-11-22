@@ -1,15 +1,14 @@
 const model = require('../dbcon/dbcon');
 
 exports.signin = async (req, res)=>{
-    const {userId, password} = req.body;
-    if(userId == ""||password == ""){
+    const {userId, hashPassword} = req.body;
+    if(userId == ""||hashPassword == ""){
         res.status(400).json({
             message:"There is a blank"
         });
     }
     try {
         const findUser = await model.User.findOne({raw:true,where:{userId: userId}});//select user
-        console.log(findUser)
         if(!findUser){//if server can't find user
             console.log('cant find user');
             res.status(401).json({
@@ -18,7 +17,7 @@ exports.signin = async (req, res)=>{
         }
 
         //if server can find user
-        if(findUser.password == password){
+        if(findUser.password == hashPassword){
             console.log('signin success');
             res.json({
                 result:1
@@ -39,9 +38,9 @@ exports.signin = async (req, res)=>{
 }
 
 exports.signup = async (req, res)=>{//signup 
-    const {userId, password, userName} = req.body;
-
-    if(!userId||!password||!userName){//if req has null
+    const {userId, hashPassword, userName} = req.body;
+    
+    if(!userId||!hashPassword||!userName){//if req has null
         res.status(400).json({
             message:'There is a blank'
         })
@@ -55,8 +54,7 @@ exports.signup = async (req, res)=>{//signup
                 message:"user is already exists"
             })
         }
-        const createUser = await model.User.create({userId:userId, password:password, userName:userName});
-        console.log(createUser.toJSON());
+        const createUser = await model.User.create({userId:userId, password:hashPassword, userName:userName});
         res.json({
             result:1,
             message:'signup success'
